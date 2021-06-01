@@ -104,7 +104,7 @@ const update_coffee = (req, res, next) => {
 }
 
 
-const getitemcoffee = (req, res, next) => {
+const getcoffee = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
@@ -200,7 +200,7 @@ const getDonHang = (req, res, next) => {
 
 
 router.get('/', getdata);
-router.get('/getcoffee/:id',  getitemcoffee);
+router.get('/getcoffee/:id',  getcoffee);
 router.post('/add', add);
 router.delete('/xoa/:id', xoa);
 router.put('/update_coffee/:id', update_coffee);
