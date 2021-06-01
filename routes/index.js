@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/mydb";
+var url = "mongodb+srv://Xaopaibun:vanquy@cluster0.bxvyn.mongodb.net/test";
+
 var cors = require('cors')
 var multer = require('multer')
 router.use(cors());
@@ -47,6 +48,7 @@ router.post("/upload", (req, res) => {
 });
 
 
+// Sản Phẩm
 const getdata = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
@@ -58,17 +60,7 @@ const getdata = (req, res, next) => {
         });
     });
 }
-const getNCC = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("NhaCungCap").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
+
 const xoa = (req, res, next) => {
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
@@ -81,18 +73,7 @@ const xoa = (req, res, next) => {
         });
     });
 }
-const xoaloai = (req, res, next) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var myquery = { _id: req.params.id };
-        dbo.collection("LoaiCoffee").deleteOne(myquery, function (err, obj) {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Xóa dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
+
 const add = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
@@ -122,18 +103,8 @@ const update_coffee = (req, res, next) => {
     });
 }
 
-const chitietdata_ = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("CTNCC").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
-const getcoffee = (req, res, next) => {
+
+const getitemcoffee = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
@@ -141,6 +112,20 @@ const getcoffee = (req, res, next) => {
         dbo.collection("SanPham").find(item).toArray(function (err, result) {
             if (err) res.sendStatus(405);
             res.send(result[0]);
+            db.close();
+        });
+    });
+}
+// het REST Sản phẩm
+
+
+const chitietdata_ = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        dbo.collection("CTNCC").find().toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
             db.close();
         });
     });
@@ -157,17 +142,50 @@ const chitietdata = (req, res, next) => {
         });
     });
 }
+
+
+//Loại Sản Phẩm 
 const getloaicoffee = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("LoaiCoffee").find().toArray(function (err, result) {
+        dbo.collection("LoaiSanPham").find().toArray(function (err, result) {
             if (err) res.sendStatus(405);
             res.send(result);
             db.close();
         });
     });
 }
+
+const xoaloai = (req, res, next) => {
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var myquery = { _id: req.params.id };
+        dbo.collection("LoaiSanPham").deleteOne(myquery, function (err, obj) {
+            if (err) res.sendStatus(405);
+            res.send({ success: "Xóa dữ liệu thành công !" })
+            db.close();
+        });
+    });
+}
+
+
+
+//Nhà cung cấp
+const getNCC = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        dbo.collection("NhaCungCap").find().toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
+
+
 const getDonHang = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
@@ -182,13 +200,24 @@ const getDonHang = (req, res, next) => {
 
 
 router.get('/', getdata);
-router.get('/getcoffee/:id', getcoffee);
-router.get('/getloai', getloaicoffee);
-router.get('/getNCC', getNCC);
-router.get('/getDonHang', getDonHang);
-router.get('/chitietdata_', chitietdata_);
-router.get('/chitietdata', chitietdata);
+router.get('/getcoffee/:id',  getitemcoffee);
 router.post('/add', add);
 router.delete('/xoa/:id', xoa);
 router.put('/update_coffee/:id', update_coffee);
+
+
+
+router.get('/getloai', getloaicoffee);
+router.delete('/xoaloai/:id', xoaloai);
+
+router.get('/getNCC', getNCC);
+
+
+router.get('/getDonHang', getDonHang);
+
+
+router.get('/chitietdata_', chitietdata_);
+router.get('/chitietdata', chitietdata);
+
+
 module.exports = router;
