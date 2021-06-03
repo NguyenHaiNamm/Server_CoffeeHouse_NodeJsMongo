@@ -84,6 +84,27 @@ router.post('/logout', (req, res) => {
     res.sendStatus(200);
 });
 
+const dangky = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        let dulieu = { gmail: req.body.gmail, password: md5(req.body.password), name: req.body.name, phone: req.body.phone, status: true, type: false };
+        dbo.collection("User").findOne({ gmail: req.body.gmail },  (err, result) =>{
+            if (err) res.status(405).send(err);
+            if (result == null) {
+                dbo.collection("User").insertOne(dulieu, (err, result) => {
+                    if (err) res.status(405).send({ error: "abc" });
+                    res.send('Đăng ký tài khoản thành công ');
+                });
+            }
+            else res.send('Tài Khoản đã tồn tại ');
+            db.close();
+        });
+    });
+}
+
+
+router.post('/dangky', dangky);
 router.post('/login', login);
 router.get('/getuser', getuser);
 module.exports = router;
