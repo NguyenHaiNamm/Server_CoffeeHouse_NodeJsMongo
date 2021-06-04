@@ -54,19 +54,19 @@ const login = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("User").findOne({ username: req.body.username, password: req.body.password }, function (err, result) {
+        dbo.collection("User").findOne({ username: req.body.username, password:  md5(req.body.password) }, function (err, result) {
             if (err) {
                 res.sendStatus(405);
             }
             else {
                 if (result != null) {
-                    const accessToken = jwt.sign({ username: req.body.username, password: req.body.password }, process.env.ACCESS_TOKEN_SECRET, {
+                    const accessToken = jwt.sign({ username: req.body.username, password: md5(req.body.password) }, process.env.ACCESS_TOKEN_SECRET, {
                         expiresIn: '30s',
                     });
 
-                    const refreshToken = jwt.sign({ username: req.body.username, password: req.body.password }, process.env.REFRESH_TOKEN_SECRET);
+                    const refreshToken = jwt.sign({ username: req.body.username, password: md5(req.body.password) }, process.env.REFRESH_TOKEN_SECRET);
                     refreshTokens.push(refreshToken);
-                    res.json({ accessToken, refreshToken });
+                    res.json({ accessToken, refreshToken, result  });
                 }
                 else {
                     res.status(404).send({ ThongBao: "Bạn nhập sai tài khoản hoặc mật khẩu rồi" });
@@ -94,7 +94,7 @@ const dangky = (req, res, next) => {
             if (result == null) {
                 dbo.collection("User").insertOne(dulieu, (err, result) => {
                     if (err) res.status(405).send({ error: "abc" });
-                    res.send('Đăng ký tài khoản thành công ');
+                    res.send('Đăng ký tài khoản thành công');
                 });
             }
             else res.send('Tài Khoản đã tồn tại ');
