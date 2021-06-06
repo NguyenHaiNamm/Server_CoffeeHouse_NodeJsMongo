@@ -10,7 +10,7 @@ var request = require('request')
 let path = require("path");
 
 
-// Khởi tạo biến cấu hình cho việc lưu trữ file upload
+// Khởi tạo biến cấu hình cho việc lưu trữ file upload ahihi
 let diskStorage = multer.diskStorage({
   destination: (req, file, callback) => {
     // Định nghĩa nơi file upload sẽ được lưu lại
