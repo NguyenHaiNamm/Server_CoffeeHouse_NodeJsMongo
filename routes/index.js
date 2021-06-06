@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://Xaopaibun:vanquy@cluster0.bxvyn.mongodb.net/test";
-
+const emailController = require('../controllers/emailController')
 var cors = require('cors')
 var multer = require('multer')
 router.use(cors());
@@ -232,5 +232,8 @@ router.get('/getDonHang', getDonHang);
 router.get('/chitietdata_', chitietdata_);
 router.get('/chitietdata', chitietdata);
 
+
+
+//router.post('/send-email', emailController.sendMail)
 
 module.exports = router;

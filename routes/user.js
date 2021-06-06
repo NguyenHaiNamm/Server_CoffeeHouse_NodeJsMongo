@@ -3,6 +3,8 @@ var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://Xaopaibun:vanquy@cluster0.bxvyn.mongodb.net/test";
 // var session = require('express-session')
+const mailer = require('../src/utils/mailer')
+const emailController = require('../controllers/emailController')
 var cors = require('cors')
 var md5 = require('md5');
 var jwt = require('jsonwebtoken');
@@ -94,6 +96,7 @@ const dangky = (req, res, next) => {
             if (result == null) {
                 dbo.collection("User").insertOne(dulieu, (err, result) => {
                     if (err) res.status(405).send({ error: "abc" });
+                    mailer.sendMail(req.body.gmail, 'Đăng ký tài khoản Coffee House', 'Chúc mừng bạn đã đăng ký tài khoản thành công! Tài khoản truy cập của bạn : '+ req.body.gmail);
                     res.send('Đăng ký tài khoản thành công');
                 });
             }
