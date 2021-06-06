@@ -10,7 +10,7 @@ var request = require('request')
 let path = require("path");
 
 
-// Khởi tạo biến cấu hình cho việc lưu trữ file upload ahihi
+// Khởi tạo biến cấu hình cho việc lưu trữ file upload ahihi hvhg
 let diskStorage = multer.diskStorage({
   destination: (req, file, callback) => {
     // Định nghĩa nơi file upload sẽ được lưu lại
@@ -170,6 +170,18 @@ const xoaloai = (req, res, next) => {
     });
 }
 
+const getloaicoffee_id = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _idloai: req.params.id };
+        dbo.collection("SanPham").find(item).toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
 
 
 //Nhà cung cấp
@@ -208,6 +220,7 @@ router.put('/update_coffee/:id', update_coffee);
 
 
 router.get('/getloai', getloaicoffee);
+router.get('/getloai/:id', getloaicoffee_id);
 router.delete('/xoaloai/:id', xoaloai);
 
 router.get('/getNCC', getNCC);
