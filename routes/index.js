@@ -119,29 +119,7 @@ const getcoffee = (req, res, next) => {
 // het REST Sản phẩm
 
 
-const chitietdata_ = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("CTNCC").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
 
-const chitietdata = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCayCanh");
-        dbo.collection("ShopCayCanh").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
 
 
 //Loại Sản Phẩm 
@@ -210,6 +188,85 @@ const getDonHang = (req, res, next) => {
     });
 }
 
+// Ddăt hang 
+const orderProducts = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        let dulieuthem = {_id : Math.floor(Math.random() * 110000).toString(),fullname : req.body.fullname,phone : req.body.phone, note : req.body.note, gmail : req.body.gmail,address : req.body.address, OrderProducts: req.body.OrderProducts,status : false, date :Date.now(), sumMoney : req.body.sumMoney};
+        dbo.collection("OrderProducts").insertOne(dulieuthem, (err, result) => {
+            if (err) res.sendStatus(405);
+            res.send({ success: "Thêm dữ liệu thành công !" })
+            db.close();
+        });
+    });
+}
+
+const getorderProducts = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        dbo.collection("OrderProducts").find().toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
+
+const getorderProducts_iD = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _id: req.params.id };
+        dbo.collection("OrderProducts").find(item).toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
+
+
+const deleteorderProducts_iD = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _id: req.params.id };
+        dbo.collection("OrderProducts").deleteOne(item, function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send({ success: "Xóa dữ liệu thành công !" })
+            db.close();
+        });
+    });
+}
+const updatestatusorderProducts_iD = (req, res, next) => {
+    MongoClient.connect(url, function (err, db) {
+        if (err) res.sendStatus(403);
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _id: req.params.id };
+        var newvalues = { $set: { status : true } };
+        dbo.collection("OrderProducts").updateOne(item, newvalues, function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send('Cập nhật status thành công');
+            db.close();
+        });
+    });
+}
+
+
+const BookingTableOnline = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        let dulieu = {_id : Math.floor(Math.random() * 110000).toString(),fullname : req.body.fullname,phone : req.body.phone, date : req.body.date, timeslot : req.body.timeslot, status : false};
+        dbo.collection("BookingTableOnline").insertOne(dulieu, (err, result) => {
+            if (err) res.sendStatus(405);
+            res.send({ success: "Thêm dữ liệu thành công !" })
+            db.close();
+        });
+    });
+}
 
 router.get('/', getdata);
 router.get('/getcoffee/:id',  getcoffee);
@@ -229,11 +286,14 @@ router.get('/getNCC', getNCC);
 router.get('/getDonHang', getDonHang);
 
 
-router.get('/chitietdata_', chitietdata_);
-router.get('/chitietdata', chitietdata);
-
-
-
+router.post('/orderProduct', orderProducts);
+router.get('/getorderProduct', getorderProducts);
+router.get('/getorderProducts_iD/:id', getorderProducts_iD);
+router.delete('/deleteorderProducts_iD/:id', deleteorderProducts_iD);
+router.put('/updatestatusorderProducts_iD/:id', updatestatusorderProducts_iD);
 //router.post('/send-email', emailController.sendMail)
+
+router.post('/BookingTableOnline', BookingTableOnline);
+
 
 module.exports = router;

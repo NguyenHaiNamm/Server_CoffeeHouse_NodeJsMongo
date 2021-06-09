@@ -56,7 +56,7 @@ const login = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("User").findOne({ username: req.body.username, password:  md5(req.body.password) }, function (err, result) {
+        dbo.collection("User").findOne({ username: req.body.username, password:  md5(req.body.password), type : false }, function (err, result) {
             if (err) {
                 res.sendStatus(405);
             }
@@ -107,7 +107,38 @@ const dangky = (req, res, next) => {
 }
 
 
+const loginAdmin = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        dbo.collection("User").findOne({ gmail: req.body.gmail, password:  md5(req.body.password), type : true }, function (err, result) {
+            if (err) {
+                res.sendStatus(405);
+            }
+            else {
+                if (result != null) {
+                    const accessToken = jwt.sign({ gmail: req.body.gmail, password: md5(req.body.password) }, process.env.ACCESS_TOKEN_SECRET, {
+                        expiresIn: '30s',
+                    });
+
+                    const refreshToken = jwt.sign({ gmail: req.body.gmail, password: md5(req.body.password) }, process.env.REFRESH_TOKEN_SECRET);
+                    refreshTokens.push(refreshToken);
+                    res.json({ accessToken, refreshToken, result  });
+                }
+                else {
+                    res.status(404).send({ ThongBao: "Bạn nhập sai tài khoản hoặc mật khẩu rồi" });
+                }
+                //res.status(200).send('ok')
+            }
+            db.close();
+        });
+    });
+}
+
 router.post('/dangky', dangky);
 router.post('/login', login);
+router.post('/loginAdmin', loginAdmin);
 router.get('/getuser', getuser);
+
+
 module.exports = router;
