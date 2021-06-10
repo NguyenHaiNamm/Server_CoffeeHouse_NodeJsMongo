@@ -3,12 +3,18 @@ var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://Xaopaibun:vanquy@cluster0.bxvyn.mongodb.net/test";
 const emailController = require('../controllers/emailController')
+const ProductController = require('../controllers/ProductController');
+const TypeProducts =require('../controllers/TypeProducts');
+const NewsController =require('../controllers/NewsController');
+const OrderProductsController = require('../controllers/OrderProductsController');
+const BookingTableOnlineController = require('../controllers/BookingTableOnlineController');
+const mailer = require('../src/utils/mailer')
 var cors = require('cors')
 var multer = require('multer')
 router.use(cors());
 var request = require('request')
 let path = require("path");
-
+const nodemailer = require("nodemailer");
 
 // Khởi tạo biến cấu hình cho việc lưu trữ file upload ahihi hvhg
 let diskStorage = multer.diskStorage({
@@ -48,118 +54,7 @@ router.post("/upload", (req, res) => {
 });
 
 
-// Sản Phẩm
-const getdata = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("SanPham").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
 
-const xoa = (req, res, next) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var myquery = { _id: req.params.id };
-        dbo.collection("SanPham").deleteOne(myquery, function (err, obj) {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Xóa dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
-
-const add = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-    
-        let dulieuthem = { _id: req.body._id, TenCoffee: req.body.ten, mota: req.body.mota, images: [req.body.img], gia:  req.body.gia, _idloai:req.body._idloai , soluong : req.body.soluong, thongtin : req.body.thongtin, thuonghieu :  req.body.thuonghieu};
-        dbo.collection("SanPham").insertOne(dulieuthem, (err, result) => {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Thêm dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
-
-
-const update_coffee = (req, res, next) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) res.sendStatus(403);
-        var dbo = db.db("DbCoffeeHouse");
-        var item = { _id: req.params.id };
-        var newvalues = { $set: { name: req.body.name, img: req.body.img, Gia: req.body.Gia, _idLoai: req.body._idLoai } };
-        dbo.collection("SanPham").updateOne(item, newvalues, function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send('Cập nhật thành công');
-            db.close();
-        });
-    });
-}
-
-
-const getcoffee = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var item = { _id: req.params.id };
-        dbo.collection("SanPham").find(item).toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result[0]);
-            db.close();
-        });
-    });
-}
-// het REST Sản phẩm
-
-
-
-
-
-//Loại Sản Phẩm 
-const getloaicoffee = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("LoaiSanPham").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
-
-const xoaloai = (req, res, next) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var myquery = { _id: req.params.id };
-        dbo.collection("LoaiSanPham").deleteOne(myquery, function (err, obj) {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Xóa dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
-
-const getloaicoffee_id = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var item = { _idloai: req.params.id };
-        dbo.collection("SanPham").find(item).toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
 
 
 //Nhà cung cấp
@@ -176,124 +71,68 @@ const getNCC = (req, res, next) => {
 }
 
 
-const getDonHang = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("Order").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
 
-// Ddăt hang 
-const orderProducts = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        let dulieuthem = {_id : Math.floor(Math.random() * 110000).toString(),fullname : req.body.fullname,phone : req.body.phone, note : req.body.note, gmail : req.body.gmail,address : req.body.address, OrderProducts: req.body.OrderProducts,status : false, date :Date.now(), sumMoney : req.body.sumMoney};
-        dbo.collection("OrderProducts").insertOne(dulieuthem, (err, result) => {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Thêm dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
+router.get('/', ProductController.getdata);
+router.get('/getcoffee/:id',  ProductController.getcoffee);
+router.post('/add', ProductController.add);
+router.delete('/xoa/:id', ProductController.xoa);
+router.put('/update_coffee/:id', ProductController.update_coffee);
 
-const getorderProducts = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("OrderProducts").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
-
-const getorderProducts_iD = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var item = { _id: req.params.id };
-        dbo.collection("OrderProducts").find(item).toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
-        });
-    });
-}
-
-
-const deleteorderProducts_iD = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        var item = { _id: req.params.id };
-        dbo.collection("OrderProducts").deleteOne(item, function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Xóa dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
-const updatestatusorderProducts_iD = (req, res, next) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) res.sendStatus(403);
-        var dbo = db.db("DbCoffeeHouse");
-        var item = { _id: req.params.id };
-        var newvalues = { $set: { status : true } };
-        dbo.collection("OrderProducts").updateOne(item, newvalues, function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send('Cập nhật status thành công');
-            db.close();
-        });
-    });
-}
-
-
-const BookingTableOnline = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        let dulieu = {_id : Math.floor(Math.random() * 110000).toString(),fullname : req.body.fullname,phone : req.body.phone, date : req.body.date, timeslot : req.body.timeslot, status : false};
-        dbo.collection("BookingTableOnline").insertOne(dulieu, (err, result) => {
-            if (err) res.sendStatus(405);
-            res.send({ success: "Thêm dữ liệu thành công !" })
-            db.close();
-        });
-    });
-}
-
-router.get('/', getdata);
-router.get('/getcoffee/:id',  getcoffee);
-router.post('/add', add);
-router.delete('/xoa/:id', xoa);
-router.put('/update_coffee/:id', update_coffee);
-
-
-
-router.get('/getloai', getloaicoffee);
-router.get('/getloai/:id', getloaicoffee_id);
-router.delete('/xoaloai/:id', xoaloai);
+router.get('/getloai', TypeProducts.getloaicoffee);
+router.get('/getloai/:id', TypeProducts.getloaicoffee_id);
+router.delete('/xoaloai/:id', TypeProducts.xoaloai);
 
 router.get('/getNCC', getNCC);
 
-
-router.get('/getDonHang', getDonHang);
-
-
-router.post('/orderProduct', orderProducts);
-router.get('/getorderProduct', getorderProducts);
-router.get('/getorderProducts_iD/:id', getorderProducts_iD);
-router.delete('/deleteorderProducts_iD/:id', deleteorderProducts_iD);
-router.put('/updatestatusorderProducts_iD/:id', updatestatusorderProducts_iD);
+router.post('/orderProduct', OrderProductsController.orderProducts);
+router.get('/getorderProduct', OrderProductsController.getorderProducts);
+router.get('/getorderProducts_iD/:id', OrderProductsController.getorderProducts_iD);
+router.delete('/deleteorderProducts_iD/:id', OrderProductsController.deleteorderProducts_iD);
+router.put('/updatestatusorderProducts_iD/:id', OrderProductsController.updatestatusorderProducts_iD);
 //router.post('/send-email', emailController.sendMail)
 
-router.post('/BookingTableOnline', BookingTableOnline);
+router.post('/BookingTableOnline', BookingTableOnlineController.BookingTableOnline);
+
+router.get('/getNews', NewsController.getnews);
+router.get('/getNews/:id', NewsController.getnewsdetail);
+router.delete('/deleteNews/:id',NewsController.deleteNews);
+router.put('/updateNews/:id', NewsController.updateNews);
+router.get('/getNewslimit', NewsController.getnewslimit);
+router.post('/addNews', NewsController.addNews);
 
 
+async function SendMail(abc) {
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing
+   
+    const adminEmail = 'phamjin303@gmail.com'
+    const adminPassword = '0352343938'
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+    
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: adminEmail, // generated ethereal user
+        pass: adminPassword, // generated ethereal password
+      },
+    });
+  
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: '"Fred Foo 👻" '+  adminEmail , // sender address
+      to: abc, // list of receivers
+      subject: "Hello Test✔", // Subject line
+      text: "Hello world?", // plain text body
+      html: "<b>Hello world?</b>", // html body
+    });
+  
+    console.log("Message sent: %s", info.messageId);
+    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+  
+    // Preview only available when sending through an Ethereal account
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+  }
 module.exports = router;

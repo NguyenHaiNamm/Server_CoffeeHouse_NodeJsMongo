@@ -1,0 +1,45 @@
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb+srv://Xaopaibun:vanquy@cluster0.bxvyn.mongodb.net/test";
+//Loại Sản Phẩm 
+const getloaicoffee = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        dbo.collection("LoaiSanPham").find().toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
+
+const xoaloai = (req, res, next) => {
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var myquery = { _id: req.params.id };
+        dbo.collection("LoaiSanPham").deleteOne(myquery, function (err, obj) {
+            if (err) res.sendStatus(405);
+            res.send({ success: "Xóa dữ liệu thành công !" })
+            db.close();
+        });
+    });
+}
+
+const getloaicoffee_id = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _idloai: req.params.id };
+        dbo.collection("SanPham").find(item).toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
+module.exports = {
+    getloaicoffee: getloaicoffee,
+    getloaicoffee_id:getloaicoffee_id,
+    xoaloai: xoaloai,
+}

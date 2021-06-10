@@ -1,3 +1,5 @@
+
+
 const mailer = require('../src/utils/mailer')
 let sendMail = async (req, res) => {
     try {
