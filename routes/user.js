@@ -62,11 +62,11 @@ const login = (req, res, next) => {
             }
             else {
                 if (result != null) {
-                    const accessToken = jwt.sign({ username: req.body.username, password: md5(req.body.password) }, process.env.ACCESS_TOKEN_SECRET, {
+                    const accessToken = jwt.sign({ username: req.body.username }, process.env.ACCESS_TOKEN_SECRET, {
                         expiresIn: '30s',
                     });
 
-                    const refreshToken = jwt.sign({ username: req.body.username, password: md5(req.body.password) }, process.env.REFRESH_TOKEN_SECRET);
+                    const refreshToken = jwt.sign({ username: req.body.username }, process.env.REFRESH_TOKEN_SECRET);
                     refreshTokens.push(refreshToken);
                     res.json({ accessToken, refreshToken, result  });
                 }

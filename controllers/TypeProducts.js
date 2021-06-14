@@ -38,8 +38,40 @@ const getloaicoffee_id = (req, res, next) => {
         });
     });
 }
+
+const addloaicoffee = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        let dulieuthem = { _id: 'L'+ Math.floor(Math.random() * 11), tenloai : req.body.tenloai };
+        dbo.collection("LoaiSanPham").insertOne(dulieuthem, (err, result) => {
+            if (err) res.sendStatus(405);
+            res.send({ success: "Thêm dữ liệu thành công !" })
+            db.close();
+        });
+    });
+}
+
+
+
+const getcoffee_idloai = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _id: req.params.id };
+        dbo.collection("ListProductCategories").find(item).toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+}
+
+
 module.exports = {
     getloaicoffee: getloaicoffee,
     getloaicoffee_id:getloaicoffee_id,
     xoaloai: xoaloai,
+    addloaicoffee : addloaicoffee,
+    getcoffee_idloai : getcoffee_idloai
 }

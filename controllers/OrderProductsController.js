@@ -15,11 +15,14 @@ const orderProducts = (req, res, next) => {
     });
 }
 
+
+
 const getorderProducts = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("OrderProducts").find().toArray(function (err, result) {
+        var mysort = { date: - 1 };
+        dbo.collection("OrderProducts").find().sort(mysort).toArray(function (err, result) {
             if (err) res.sendStatus(405);
             res.send(result);
             db.close();
@@ -39,6 +42,7 @@ const getorderProducts_iD = (req, res, next) => {
         });
     });
 }
+
 
 
 const deleteorderProducts_iD = (req, res, next) => {
@@ -67,10 +71,40 @@ const updatestatusorderProducts_iD = (req, res, next) => {
     });
 }
 
+
+
+const getPageOrderProducts = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        dbo.collection("OrderProducts").find().toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send({pagelength : Math.ceil(result.length / 5)});
+            db.close();
+        });
+    });
+}
+
+const getDataOrderProductPage = (req, res, next) => {
+    MongoClient.connect(url, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("DbCoffeeHouse");
+        var page = parseInt(req.params.page);
+        dbo.collection("OrderProducts").find().limit(5).skip(5*(page - 1)).toArray(function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send(result);
+            db.close();
+        });
+    });
+} 
+
 module.exports = {
     deleteorderProducts_iD: deleteorderProducts_iD,
     getorderProducts_iD : getorderProducts_iD,
     updatestatusorderProducts_iD : updatestatusorderProducts_iD,
     getorderProducts : getorderProducts,
-    orderProducts: orderProducts
+    orderProducts: orderProducts,
+    getDataOrderProductPage: getDataOrderProductPage,
+    getPageOrderProducts : getPageOrderProducts
+  
 }
