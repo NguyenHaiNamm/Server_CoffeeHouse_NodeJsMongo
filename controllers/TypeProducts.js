@@ -68,10 +68,27 @@ const getcoffee_idloai = (req, res, next) => {
 }
 
 
+const updateloai = (req, res, next) => {
+    MongoClient.connect(url, function (err, db) {
+        if (err) res.sendStatus(403);
+        var dbo = db.db("DbCoffeeHouse");
+        var item = { _id: req.params.id };
+        var newvalues = { $set:{ tenloai : req.body.name } };
+        dbo.collection("LoaiSanPham").updateOne(item, newvalues, function (err, result) {
+            if (err) res.sendStatus(405);
+            res.send('Cập nhật thành công');
+            db.close();
+        });
+    });
+}
+
+
+
 module.exports = {
     getloaicoffee: getloaicoffee,
     getloaicoffee_id:getloaicoffee_id,
     xoaloai: xoaloai,
     addloaicoffee : addloaicoffee,
-    getcoffee_idloai : getcoffee_idloai
+    getcoffee_idloai : getcoffee_idloai,
+    updateloai : updateloai
 }

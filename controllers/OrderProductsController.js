@@ -5,10 +5,10 @@ const orderProducts = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
-        let dulieuthem = {_id : Math.floor(Math.random() * 110000).toString(),fullname : req.body.fullname,phone : req.body.phone, note : req.body.note, gmail : req.body.gmail,address : req.body.address, OrderProducts: req.body.OrderProducts,status : false, date :Date.now(), sumMoney : req.body.sumMoney};
+        let dulieuthem = {_id : Math.floor(Math.random() * 110000).toString(),fullname : req.body.fullname,phone : req.body.phone, note : req.body.note, gmail : req.body.gmail,address : req.body.address, OrderProducts: req.body.OrderProducts,status : 1, date :Date.now(), sumMoney : req.body.sumMoney};
         dbo.collection("OrderProducts").insertOne(dulieuthem, (err, result) => {
             if (err) res.sendStatus(405);
-            SendMail(req.body.gmail).catch(console.error);
+            // SendMail(req.body.gmail).catch(console.error);
             res.send({ success: "Thêm dữ liệu thành công !" })
             db.close();
         });
@@ -62,7 +62,7 @@ const updatestatusorderProducts_iD = (req, res, next) => {
         if (err) res.sendStatus(403);
         var dbo = db.db("DbCoffeeHouse");
         var item = { _id: req.params.id };
-        var newvalues = { $set: { status : true } };
+        var newvalues = { $set: { status : req.body.status } };
         dbo.collection("OrderProducts").updateOne(item, newvalues, function (err, result) {
             if (err) res.sendStatus(405);
             res.send('Cập nhật status thành công');
@@ -79,7 +79,7 @@ const getPageOrderProducts = (req, res, next) => {
         var dbo = db.db("DbCoffeeHouse");
         dbo.collection("OrderProducts").find().toArray(function (err, result) {
             if (err) res.sendStatus(405);
-            res.send({pagelength : Math.ceil(result.length / 5)});
+            res.send({pagelength : Math.ceil(result.length / 5), abc : abc});
             db.close();
         });
     });
