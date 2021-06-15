@@ -96,7 +96,20 @@ const getDataOrderProductPage = (req, res, next) => {
             db.close();
         });
     });
-} 
+}
+
+// const getMoney = (req, res, next) => {
+//     MongoClient.connect(url, (err, db) => {
+//         if (err) throw err;
+//         var dbo = db.db("DbCoffeeHouse");
+//         var page = parseInt(req.params.page);
+//         dbo.collection("OrderProducts").find().toArray(function (err, result) {
+//             if (err) res.sendStatus(405);
+//             res.send(result);
+//             db.close();
+//         });
+//     });
+// } 
 
 module.exports = {
     deleteorderProducts_iD: deleteorderProducts_iD,

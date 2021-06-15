@@ -56,13 +56,14 @@ const login = (req, res, next) => {
     MongoClient.connect(url, (err, db) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("User").findOne({ gmail: req.body.gmail, password:  md5(req.body.password), type : true }, function (err, result) {
+        dbo.collection("User").findOne({ gmail: req.body.gmail, password:  md5(req.body.password), type : false }, function (err, result) {
             if (err) {
                 res.sendStatus(405);
             }
             else {
                 if (result != null) {
-                    const accessToken = jwt.sign({ gmail: req.body.gmail }, process.env.ACCESS_TOKEN_SECRET, {
+                    console.log(result);
+                    const accessToken = jwt.sign({ gmail: req.body.gmail, name : result.name }, process.env.ACCESS_TOKEN_SECRET, {
                         expiresIn: '1h'
                     });
 
@@ -96,7 +97,7 @@ const dangky = (req, res, next) => {
             if (result == null) {
                 dbo.collection("User").insertOne(dulieu, (err, result) => {
                     if (err) res.status(405).send({ error: "abc" });
-                    mailer.sendMail(req.body.gmail, 'Đăng ký tài khoản Coffee House', 'Chúc mừng bạn đã đăng ký tài khoản thành công! Tài khoản truy cập của bạn : '+ req.body.gmail);
+                    // mailer.sendMail(req.body.gmail, 'Đăng ký tài khoản Coffee House', 'Chúc mừng bạn đã đăng ký tài khoản thành công! Tài khoản truy cập của bạn : '+ req.body.gmail);
                     res.send('Đăng ký tài khoản thành công');
                 });
             }

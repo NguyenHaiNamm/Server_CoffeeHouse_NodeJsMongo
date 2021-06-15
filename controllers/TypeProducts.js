@@ -31,7 +31,7 @@ const getloaicoffee_id = (req, res, next) => {
         if (err) throw err;
         var dbo = db.db("DbCoffeeHouse");
         var item = { _idloai: req.params.id };
-        dbo.collection("SanPham").find(item).toArray(function (err, result) {
+        dbo.collection("SanPham").find(item).limit(6).toArray(function (err, result) {
             if (err) res.sendStatus(405);
             res.send(result);
             db.close();

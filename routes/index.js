@@ -61,7 +61,7 @@ const imageUploader = multer({ dest: 'images/' })
 
 router.post('/uploadImages', imageUploader.single('images'), UploadImagesController.UploadImages)
 
-router.get('/',authenToken, async(req, res)=>{
+router.get('/', async(req, res)=>{
   console.log("token ok")
   const data = await ProductController.getdata();
   // console.log(data)
@@ -72,7 +72,7 @@ router.get('/getcoffee/:id', ProductController.getcoffee);
 router.post('/addCoffee', ProductController.addCoffee);
 router.delete('/xoa/:id', ProductController.xoa);
 router.put('/update_coffee/:id', ProductController.update_coffee);
-router.get('/getdata/page=:page', authenToken, ProductController.getdatapage);
+router.get('/getdata/page=:page', ProductController.getdatapage);
 router.get('/getpage', ProductController.getpage);
 router.get('/findToCoffee', ProductController.findToCoffee);
 
