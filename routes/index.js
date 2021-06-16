@@ -8,7 +8,7 @@ const BookingTableOnlineController = require('../controllers/BookingTableOnlineC
 const UploadImagesController = require('../controllers/UploadImagesController');
 const OtherController = require('../controllers/OtherController');
 const UserController = require('../controllers/UserController');
-// const middlewareAuthenToken = require('../middleware/middlewareAuthenToken')
+ const middlewareAuthenToken = require('../middleware/middlewareAuthenToken')
 var cors = require('cors')
 router.use(cors());
 var fs = require('fs');
@@ -16,7 +16,8 @@ var request = require('request')
 let path = require("path");
 const nodemailer = require("nodemailer");
 const multer = require('multer')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+// const { authenToken } = require('../middleware/middlewareAuthenToken');
 
 
 var getIP = function (req, res) {
@@ -30,29 +31,27 @@ var getIP = function (req, res) {
   res.json(ipAddr);
 }
 
-const authenToken = (req, res, next) => {
-  const authorizationHeader = req.headers['authorization'];
-  // 'Beaer [token]'
-  if (!!authorizationHeader){
-    const token = authorizationHeader.split(' ')[1];
+// const authenToken = (req, res, next) => {
+//   const authorizationHeader = req.headers['authorization'];
+//   // 'Beaer [token]'
+//   if (!!authorizationHeader){
+//     const token = authorizationHeader.split(' ')[1];
   
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
-      if (err){
-        res.send({message: "hello", error: err})
-      }
-      else{
-        console.log(data)
-        next();
-      }
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
+//       if (err){
+//         res.send({message: "thất bại", error: err})
+//       }
+//       else{
+//         console.log(data)
+//         next();
+//       }
       
-    });
-  }
-  else{
-    res.status(500).end();
-  }
-  
-
-}
+//     });
+//   }
+//   else{
+//     res.status(500).end();
+//   }
+// }
 
 router.get('/images/:name', UploadImagesController.pathImages);
 
@@ -61,7 +60,7 @@ const imageUploader = multer({ dest: 'images/' })
 
 router.post('/uploadImages', imageUploader.single('images'), UploadImagesController.UploadImages)
 
-router.get('/', async(req, res)=>{
+router.get('/getalldata', async(req, res)=>{
   console.log("token ok")
   const data = await ProductController.getdata();
   // console.log(data)

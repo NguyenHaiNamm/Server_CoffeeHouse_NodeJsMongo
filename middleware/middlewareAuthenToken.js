@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 
-exports.authenToken = (req, res, next) => {
+const authenToken = (req, res, next) => {
     try {
         const authorizationHeader = req.headers['authorization'];
         // 'Beaer [token]'
@@ -14,6 +14,8 @@ exports.authenToken = (req, res, next) => {
     } catch (error) {
         return res.status(500).end();
     }
+}
 
-
+module.exports = {
+    authenToken:authenToken
 }
