@@ -1,15 +1,23 @@
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb+srv://Xaopaibun:vanquy@cluster0.bxvyn.mongodb.net/test";
-const getdata = (req, res, next) => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        var dbo = db.db("DbCoffeeHouse");
-        dbo.collection("SanPham").find().toArray(function (err, result) {
-            if (err) res.sendStatus(405);
-            res.send(result);
-            db.close();
+
+
+
+
+const getdata = () => {
+    return new Promise((resolve)=>{
+        MongoClient.connect(url, (err, db) => {
+            if (err) throw err;
+            var dbo = db.db("DbCoffeeHouse");
+            dbo.collection("SanPham").find().toArray(function (err, result) {
+                if (err) resolve(false);
+                
+                resolve(result)
+                db.close();
+            });
         });
-    });
+    })
+    
 }
 
 
@@ -85,7 +93,7 @@ const update_coffee = (req, res, next) => {
         if (err) res.sendStatus(403);
         var dbo = db.db("DbCoffeeHouse");
         var item = { _id: req.params.id };
-        var newvalues = { $set: { name: req.body.name, img: req.body.img, Gia: req.body.Gia, _idLoai: req.body._idLoai } };
+        var newvalues = { $set:{ TenCoffee: req.body.ten, mota: req.body.mota, images: req.body.images, gia: req.body.gia, _idloai: req.body._idloai, soluong: req.body.soluong, thongtin: req.body.thongtin, thuonghieu: req.body.thuonghieu } };
         dbo.collection("SanPham").updateOne(item, newvalues, function (err, result) {
             if (err) res.sendStatus(405);
             res.send('Cập nhật thành công');
