@@ -41,7 +41,7 @@ const getpage = (req, res, next) => {
         var dbo = db.db("DbCoffeeHouse");
         dbo.collection("SanPham").find().toArray(function (err, result) {
             if (err) res.sendStatus(405);
-            res.send({pagelength : Math.ceil(result.length / 5)});
+            res.send({pagelength : Math.ceil(result.length / 6)});
             db.close();
         });
     });
@@ -53,7 +53,7 @@ const getdatapage = (req, res, next) => {
         var dbo = db.db("DbCoffeeHouse");
         var page = parseInt(req.params.page);
         // var limit = parseInt(req.params.limit);
-        dbo.collection("SanPham").find().limit(5).skip(5*(page - 1)).toArray(function (err, result) {
+        dbo.collection("SanPham").find().limit(6).skip(6*(page - 1)).toArray(function (err, result) {
             if (err) res.sendStatus(405);
             res.send(result);
             db.close();
