@@ -103,6 +103,7 @@ router.get('/getNews/:id', NewsController.getnewsdetail);
 router.delete('/deleteNews/:id', NewsController.deleteNews);
 router.put('/updateNews/:id', NewsController.updateNews);
 router.get('/getNewslimit', NewsController.getnewslimit);
+// router.get('/', NewsController.);
 
 router.get('/OpenShop', OtherController.OpenShop);
 router.get('/WeAreShopCoffee', OtherController.WeAreShopCoffee);
