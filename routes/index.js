@@ -113,7 +113,7 @@ router.put('/UpdateContentGioiThieuShop', OtherController.UpdateGioiThieuShop);
 router.put('/UpdateImagesShop', OtherController.UpdateImagesShop);
 
 router.get('/getUser', UserController.getUser);
-router.delete('/deleteUser', UserController.deleteUser);
+router.delete('/deleteUser/:id', UserController.deleteUser);
 router.put('/updateUser', UserController.updateUser);
 
 router.get('/getIP', getIP);
