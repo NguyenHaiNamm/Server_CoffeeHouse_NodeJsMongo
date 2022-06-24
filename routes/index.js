@@ -31,27 +31,6 @@ var getIP = function (req, res) {
   res.json(ipAddr);
 }
 
-// const authenToken = (req, res, next) => {
-//   const authorizationHeader = req.headers['authorization'];
-//   // 'Beaer [token]'
-//   if (!!authorizationHeader){
-//     const token = authorizationHeader.split(' ')[1];
-  
-//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
-//       if (err){
-//         res.send({message: "thất bại", error: err})
-//       }
-//       else{
-//         console.log(data)
-//         next();
-//       }
-      
-//     });
-//   }
-//   else{
-//     res.status(500).end();
-//   }
-// }
 
 router.get('/images/:name', UploadImagesController.pathImages);
 
